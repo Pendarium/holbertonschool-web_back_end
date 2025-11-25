@@ -11,7 +11,7 @@ wait_n = __import__('1-concurrent_coroutines').wait_n
 def measure_time(n: int, max_delay: int) -> float:
     """
     Docstring for measure_time
-    
+
     :param n: Description
     :type n: int
     :param max_delay: Description
