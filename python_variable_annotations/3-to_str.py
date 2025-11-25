@@ -2,7 +2,6 @@
 """
 Docstring for python_variable_annotations.3-to_str
 """
-import math
 
 
 def to_str(n: float) -> str:
@@ -14,4 +13,4 @@ def to_str(n: float) -> str:
     :return: Description
     :rtype: str
     """
-    return math.to_str(n)
+    return str(n)
