@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+"""
+Docstring for python_variable_annotations.8-make_multiplier
+"""
 from typing import Callable
 
 
