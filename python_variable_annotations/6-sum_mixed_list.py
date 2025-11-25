@@ -7,7 +7,7 @@ Docstring for python_variable_annotations.6-mxd_list
 from typing import List, Union
 
 
-def sum_mixed_list(mxd_lst: List[Union[float, int]]) -> float:
+def sum_mixed_list(mxd_lst: List[Union[int, float]]) -> float:
     """
     Docstring for sum_mixed_list
 
