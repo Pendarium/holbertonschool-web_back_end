@@ -4,12 +4,12 @@
 Docstring for python_async_comprehension.0-async_generator
 """
 
-from typing import AsyncGenerator
+from typing import Generator
 import asyncio
 import random
 
 
-async def async_generator() -> AsyncGenerator[float, None]:
+async def async_generator() -> Generator[float, None, None]:
     """
     Docstring for async_generator
 
