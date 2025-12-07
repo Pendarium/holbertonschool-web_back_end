@@ -1,2 +1,2 @@
-/ Script to list documents in "school" where name = "Holberton school"
+// Script to list documents in "school" where name = "Holberton school"
 db.school.find({ name: "Holberton school" })
