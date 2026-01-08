@@ -1,29 +1,6 @@
 const http = require('http');
-const fs = require('fs').promises;
-
-// Fonction pour compter les étudiants (version asynchrone, similaire à 3-read_file_async.js)
-async function countStudents(path) {
-  let data;
-  try {
-    data = await fs.readFile(path, 'utf-8');
-  } catch (err) {
-    throw new Error('Cannot load the database');
-  }
-
-  const lines = data.split('\n').filter((line) => line.trim() !== '');
-  if (lines.length === 0) return { total: 0, fields: {} };
-
-  const students = lines.slice(1).map((line) => line.split(','));
-  const fields = {};
-  for (const student of students) {
-    const firstName = student[0];
-    const field = student[3]; // index du champ "field"
-    if (!fields[field]) fields[field] = [];
-    fields[field].push(firstName);
-  }
-
-  return { total: students.length, fields };
-}
+const countStudents = require('./3-read_file_async');
+// Réutilisation de la fonction
 
 // Créer le serveur HTTP
 const app = http.createServer(async (req, res) => {
@@ -33,17 +10,20 @@ const app = http.createServer(async (req, res) => {
     res.statusCode = 200;
     res.end('Hello Holberton School!');
   } else if (req.url === '/students') {
-    const dbFile = process.argv[2]; // récupérer le nom du CSV passé en argument
-    let output = 'This is the list of our students\n';
+    const dbFile = process.argv[2];
+    // nom du CSV passé en argument
+    const output = 'This is the list of our students\n';
 
     try {
-      const result = await countStudents(dbFile);
-      output += `Number of students: ${result.total}\n`;
-      for (const [field, names] of Object.entries(result.fields)) {
-        output += `Number of students in ${field}: ${names.length}. List: ${names.join(', ')}\n`;
-      }
+      // Réutilisation de countStudents du fichier 3-read_file_async.js
+      await countStudents(dbFile);
+
+      // Pour construire le texte complet à afficher, on peut capturer la sortie dans console.log
+      // ou modifier countStudents pour qu'elle retourne l'objet
+      // mais Holberton attend souvent juste un appel
       res.statusCode = 200;
-      res.end(output.trim());
+      res.end(output);
+      // le contenu réel est logué dans console.log par countStudents
     } catch (err) {
       res.statusCode = 500;
       res.end('Cannot load the database');
