@@ -10,6 +10,7 @@ const app = http.createServer(async (req, res) => {
   }
 
   if (req.url === '/students') {
+    res.statusCode = 200;
     const database = process.argv[2];
     let output = 'This is the list of our students\n';
 
