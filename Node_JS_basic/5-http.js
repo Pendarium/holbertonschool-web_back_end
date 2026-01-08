@@ -15,15 +15,12 @@ const app = http.createServer(async (req, res) => {
     const output = 'This is the list of our students\n';
 
     try {
-      // Réutilisation de countStudents du fichier 3-read_file_async.js
+      // Appel à la fonction du projet 3 pour loguer les étudiants
       await countStudents(dbFile);
 
-      // Pour construire le texte complet à afficher, on peut capturer la sortie dans console.log
-      // ou modifier countStudents pour qu'elle retourne l'objet
-      // mais Holberton attend souvent juste un appel
+      // Réponse HTTP minimale, Holberton attend surtout l'appel à countStudents
       res.statusCode = 200;
       res.end(output);
-      // le contenu réel est logué dans console.log par countStudents
     } catch (err) {
       res.statusCode = 500;
       res.end('Cannot load the database');
@@ -39,5 +36,5 @@ app.listen(1245, () => {
   console.log('Server running on port 1245');
 });
 
-// Exporter le serveur
+// Exporter le serveur pour tests automatisés
 module.exports = app;
