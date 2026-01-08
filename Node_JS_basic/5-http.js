@@ -10,20 +10,21 @@ const app = http.createServer(async (req, res) => {
     return;
   }
 
-  if (req.url === '/students') {
+    if (req.url === '/students') {
     res.statusCode = 200;
     res.write('This is the list of our students\n');
 
     const database = process.argv[2];
 
     try {
-      const output = await countStudents(database);
-      res.end(${output});
+        const output = await countStudents(database);
+        res.end(output); // <-- juste passer la variable
     } catch (error) {
-      res.end(error.message);
+        res.end(error.message);
     }
     return;
-  }
+    }
+
 
   res.statusCode = 404;
   res.end();
