@@ -34,7 +34,7 @@ async function countStudents(path) {
   // Afficher le nombre d'étudiants par champ
   for (const [field, names] of Object.entries(fields)) {
     console.log(
-      `Number of students in ${field}: ${names.length}. List: ${names.join(', ')}`
+      `Number of students in ${field}: ${names.length}. List: ${names.join(', ')}`,
     );
   }
 }
