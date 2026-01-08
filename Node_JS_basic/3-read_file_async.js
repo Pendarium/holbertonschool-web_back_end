@@ -1,28 +1,42 @@
-const fs = require('fs').promises;
+const fs = require('fs');
 
-async function countStudents(path) {
-  let data;
+function countStudents(path) {
+  return new Promise((resolve, reject) => {
+    fs.readFile(path, 'utf8', (err, data) => {
+      if (err) {
+        reject(new Error('Cannot load the database'));
+        return;
+      }
 
-  try {
-    data = await fs.readFile(path, 'utf-8');
-  } catch (err) {
-    throw new Error('Cannot load the database');
-  }
+      const lines = data
+        .trim()
+        .split('\n')
+        .filter((line) => line.trim() !== '');
 
-  const lines = data.split('\n').filter((line) => line.trim() !== '');
-  if (lines.length === 0) return { total: 0, fields: {} }; // <- retourner un objet même vide
+      const students = lines.slice(1);
 
-  const students = lines.slice(1).map((line) => line.split(','));
-  const fields = {};
+      let output = `Number of students: ${students.length}\n`;
 
-  for (const student of students) {
-    const firstName = student[0];
-    const field = student[3]; // index du champ "field"
-    if (!fields[field]) fields[field] = [];
-    fields[field].push(firstName);
-  }
+      const fields = {};
 
-  return { total: students.length, fields }; // <- retourner un objet avec les données
+      for (const student of students) {
+        const parts = student.split(',');
+        const firstname = parts[0];
+        const field = parts[parts.length - 1];
+
+        if (!fields[field]) {
+          fields[field] = [];
+        }
+        fields[field].push(firstname);
+      }
+
+      for (const field of Object.keys(fields)) {
+        output += `Number of students in ${field}: ${fields[field].length}. List: ${fields[field].join(', ')}\n`;
+      }
+
+      resolve(output.trim());
+    });
+  });
 }
 
 module.exports = countStudents;
