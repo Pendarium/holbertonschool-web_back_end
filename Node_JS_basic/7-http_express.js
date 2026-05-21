@@ -1,69 +1,94 @@
 const express = require('express');
 const fs = require('fs');
 
-// Function that parse csv
+const app = express();
+
+/**
+ * Fonction qui lit le fichier CSV et compte les étudiants
+ * Retourne une Promise
+ */
 function countStudents(path) {
   return new Promise((resolve, reject) => {
-    fs.readFile(path, 'utf8', ((err, data) => {
+    fs.readFile(path, 'utf8', (err, data) => {
       if (err) {
         reject(new Error('Cannot load the database'));
         return;
       }
+
+      let totalStudents = 0;
       const results = {};
+      const output = [];
 
-      const lines = data.split('\n'); // le fichier devient un tableau de ligne en se basant sur \n pour répartir les lignes
-      const filteredLines = lines.filter((line) => line.trim() !== ''); // retirer les lignes vides
+      // Découpe le fichier ligne par ligne
+      const lines = data.split('\n');
+
+      // Supprime les lignes vides
+      const filteredLines = lines.filter((line) => line.trim() !== '');
+
+      // Ignore l'en-tête CSV
       const studentLines = filteredLines.slice(1);
-      // on lit le tableau de ligne à partir de l'index 1 (sans les entêtes)
 
-      for (const line of studentLines) { // pour chaque ligne...
-        const content = line.split(','); // va faire un tableau en séparant les valeurs via la ','
-        if (!(content[3] in results)) {
-          results[content[3]] = { students_nb: 1, students_list: [content[0]] };
+      // Parcours des étudiants
+      for (const line of studentLines) {
+        totalStudents += 1;
+
+        const content = line.split(',');
+        const firstName = content[0];
+        const field = content[3];
+
+        // Création de la filière si elle n'existe pas
+        if (!(field in results)) {
+          results[field] = {
+            students_nb: 1,
+            students_list: [firstName],
+          };
         } else {
-          results[content[3]].students_nb += 1;
-          results[content[3]].students_list.push(content[0]);
+          // Ajout des étudiants dans la filière existante
+          results[field].students_nb += 1;
+          results[field].students_list.push(firstName);
         }
       }
-      resolve(results);
-    }));
+
+      // Nombre total d'étudiants
+      output.push(`Number of students: ${totalStudents}`);
+
+      // Affichage des étudiants par filière
+      for (const [key, value] of Object.entries(results)) {
+        output.push(
+          `Number of students in ${key}: ${value.students_nb}. List: ${value.students_list.join(', ')}`
+        );
+      }
+
+      // Retourne le résultat final
+      resolve(output.join('\n'));
+    });
   });
 }
 
-const app = express();
-const port = 1245;
-
-const database = process.argv[2];
-
+/**
+ * Route principale
+ */
 app.get('/', (req, res) => {
-  res.send('Hello Holberton School!');
+  res.status(200).send('Hello Holberton School!');
 });
 
-app.get('/students', async (req, res) => {
-  res.write('This is the list of our students\n');
-  try {
-    const results = await countStudents(database);
-    let totalStudents = 0;
-    for (const key of Object.keys(results)) {
-    // for in parcourerait les propriétés pas seulement de results
-    // mais aussi du prototype (ce dont hérite les objets/dict)
-    // les méthodes object.keys() / object.values() / object.entries()
-    // permettent d'ignorer les propriétés liées au prototype
-      totalStudents += results[key].students_nb;
-    }
-    res.write(`Number of students: ${totalStudents}\n`);
-    for (const [key, value] of Object.entries(results)) {
-      res.write(`Number of students in ${key}: ${value.students_nb}. List: ${value.students_list.join(', ')}\n`);
-    }
-    res.end();
-  } catch (error) {
-    res.write(error.message);
-    res.end();
-  }
+/**
+ * Route /students
+ */
+app.get('/students', (req, res) => {
+  const database = process.argv[2];
+
+  countStudents(database)
+    .then((output) => {
+      res.status(200).send(`This is the list of our students\n${output}`);
+    })
+    .catch((error) => {
+      res.status(200).send(`This is the list of our students\n${error.message}`);
+    });
 });
 
+// Lance le serveur sur le port 1245
+app.listen(1245);
+
+// Exporte l'application Express
 module.exports = app;
-
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
-});
