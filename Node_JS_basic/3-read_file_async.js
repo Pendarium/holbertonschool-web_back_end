@@ -40,11 +40,11 @@ function countStudents(path) {
         output.push(`Number of students in ${key}: ${value.students_nb}. List: ${value.students_list.join(', ')}`);
       }
 
-      const result = output.join('\n');
+      for (const line of output) {
+        console.log(line);
+      }
 
-        console.log(result);
-
-        resolve(result);
+      resolve(output.join('\n'));
     });
   });
 }
