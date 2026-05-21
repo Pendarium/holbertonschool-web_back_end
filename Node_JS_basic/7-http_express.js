@@ -55,7 +55,7 @@ function countStudents(path) {
       // Affichage des étudiants par filière
       for (const [key, value] of Object.entries(results)) {
         output.push(
-          `Number of students in ${key}: ${value.students_nb}. List: ${value.students_list.join(', ')}`
+          `Number of students in ${key}: ${value.students_nb}. List: ${value.students_list.join(', ')}`,
         );
       }
 
