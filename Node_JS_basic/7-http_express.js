@@ -40,7 +40,7 @@ function countStudents(path) {
         if (!(field in results)) {
           results[field] = {
             students_nb: 1,
-            students_list: [firstName]
+            students_list: [firstName],
           };
         } else {
           // Ajout des étudiants dans la filière existante
